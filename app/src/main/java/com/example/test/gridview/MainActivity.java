@@ -1,19 +1,21 @@
 package com.example.test.gridview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     GridView myGrid;
 
     @Override
@@ -22,6 +24,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         myGrid = (GridView) findViewById(R.id.gridview);
         myGrid.setAdapter(new milAdapter(this));
+        myGrid.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(this, Main2Activity.class);
+        viewHolder holder = (viewHolder) view.getTag();
+        SingleItem temp = (SingleItem)holder.myCountry.getTag();
+        intent.putExtra("countryImage",temp.imageId );
+        intent.putExtra("countryName", temp.countryName);
+        startActivity(intent);
     }
 }
 
@@ -35,6 +48,13 @@ class SingleItem {
     }
 }
 
+class viewHolder {
+    ImageView myCountry;
+
+    viewHolder(View v) {
+        myCountry = (ImageView) v.findViewById(R.id.imageView);
+    }
+}
 
 class milAdapter extends BaseAdapter {
     ArrayList<SingleItem> list;
@@ -69,13 +89,6 @@ class milAdapter extends BaseAdapter {
         return position;
     }
 
-    class viewHolder {
-        ImageView myCountry;
-
-        viewHolder(View v) {
-            myCountry = (ImageView) v.findViewById(R.id.imageView);
-        }
-    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -87,14 +100,14 @@ class milAdapter extends BaseAdapter {
             holder = new viewHolder(row);
             row.setTag(holder);
 
-        }
-        else {
+        } else {
             holder = (viewHolder) row.getTag();
 
 
         }
         SingleItem temp = list.get(position);
         holder.myCountry.setImageResource(temp.imageId);
+        holder.myCountry.setTag(temp);
 
 
         return row;
